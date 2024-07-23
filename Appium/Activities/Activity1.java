@@ -1,6 +1,9 @@
+package activities;
+
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
+import org.checkerframework.checker.units.qual.A;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -13,31 +16,41 @@ public class Activity1 {
     AndroidDriver driver;
 
     @BeforeClass
-    public void setup() throws MalformedURLException {
-        UiAutomator2Options options= new UiAutomator2Options();
-        options.setPlatformName("android");
-        options.setAutomationName("UiAutomator2");
-        options.setAppPackage("com.google.android.calculator");
-        options.setAppActivity("com.android.calculator2.Calculator");
+    public void setUp() throws MalformedURLException{
+        //Set the desired capabilities
+        UiAutomator2Options caps = new UiAutomator2Options()
+                .setPlatformName("android")
+                .setAutomationName("UIAutomator2")
+                .setAppPackage("com.android.calculator2")
+                .setAppActivity(".Calculator")
+                .noReset();
 
-        URL serverURL= new URL("http://localhost:4723/");
+        //Set the appium severURL
+        URL serverUrl= new URL("http://localhost:4723/wd/hub");
 
-        driver= new AndroidDriver(serverURL, options);
+        //Initialize the android driver
+        driver = new AndroidDriver(serverUrl, caps);
     }
 
     @Test
-    public void calculator(){
-        driver.findElement(AppiumBy.id("digit_9")).click();
-        driver.findElement(AppiumBy.accessibilityId("multiply")).click();
-        driver.findElement(AppiumBy.id("com.google.android.calculator:id/digit_6")).click();
-        driver.findElement(AppiumBy.accessibilityId("equals")).click();
-        String finalResult= driver.findElement(AppiumBy.id("result_final")).getText();
-        System.out.println("Calculated value: "+finalResult);
-        Assert.assertEquals(finalResult, "54");
+    public void multiplyTest(){
+        //Find number9 and tap it
+        driver.findElement(AppiumBy.id("com.android.calculator2:id/digit_9")).click();
+        // Find multiply and tap it
+        driver.findElement(AppiumBy.id("com.android.calculator2:id/op_mul")).click();
+        //Find the number 6 and tap it
+        driver.findElement(AppiumBy.id("com.android.calculator2:id/digit_6")).click();
+        //Find the symbol = and tap it
+        driver.findElement(AppiumBy.id("com.android.calculator2:id/eq")).click();
+        String result = driver.findElement(AppiumBy.id("com.android.calculator2:id/result")).getText();
+        Assert.assertEquals(result,"54");
+
     }
 
     @AfterClass
     public void tearDown(){
-    driver.quit();
+        driver.quit();
     }
+
+
 }
